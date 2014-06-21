@@ -1,42 +1,49 @@
 ## Put comments here that give an overall description of what your
 ## functions do
+## 
 
-## Write a short comment describing this function
+## Function (object) for storing matrix and corresponding
+## inversed matrix
 
-makeCacheMatrix <- function(x = matrix()) {
-    m <- NULL
+makeCacheMatrix <- function(cachedMatrix = matrix()) {
+    invMatrix <- NULL
     
-    #function for setting
-    set <- function(y) {
-        x <<- y
-        m <<- NULL
+    # set matrix for caching
+    set <- function(newMatrix) {
+        cachedMatrix <<- newMatrix
+        invMatrix <<- NULL
     }
     
-    # get metrix ...
-    get <- function() x
+    # get cached matrix
+    get <- function() cachedMatrix
     
-    #set mean value
-    setinv <- function(inv) {
-        m <<-inv
+    # set inversed matrix
+    setInv <- function(newInvMatrix) {
+        invMatrix <<-newInvMatrix
     }
-    #get mean value
-    getinv <-function() m
+    #get inversed matrix
+    getInv <-function() invMatrix
     
-    list(set = set, get = get, setinv = setinv, getinv = getinv)
+    list(set = set, get = get, setInv = setInv, getInv = getInv)
 }
 
 
-## Write a short comment describing this function
+## It checks that makeCacheMatrix contains inversion matrix and 
+## if it contains return it. If inversion matrix is absent 
+## it will be calculated and cached there
 
-cacheSolve <- function(x, ...) {
-    ## Return a matrix that is the inverse of 'x'
-    m <- x$getinv()
-    if(!is.null(m)) {
+cacheSolve <- function(makeCacheMatrixEnv, ...) {
+    ## Return a matrix that is the inverse of 'makeCacheMatrixEnv'
+    invMatrix <- makeCacheMatrixEnv$getInv()
+    
+    if(!is.null(invMatrix)) {
         message("getting cached data")
-        return(m)
+        return(invMatrix)
     }
-    data <- x$get()
-    m <- solve(data)
-    x$setinv(m)
-    m
+    
+    cachedMatrix <- makeCacheMatrixEnv$get()
+    invMatrix <- solve(cachedMatrix)
+    makeCacheMatrixEnv$setInv(invMatrix)
+    
+    invMatrix
 }
